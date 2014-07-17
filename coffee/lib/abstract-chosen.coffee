@@ -21,7 +21,6 @@ class AbstractChosen
     @allow_single_deselect = if @options.allow_single_deselect? and @form_field.options[0]? and @form_field.options[0].text is "" then @options.allow_single_deselect else false
     @disable_search_threshold = @options.disable_search_threshold || 0
     @disable_search = @options.disable_search || false
-    @enable_search_with_value = @options.enable_search_with_value || false
     @enable_split_word_search = if @options.enable_split_word_search? then @options.enable_split_word_search else true
     @group_search = if @options.group_search? then @options.group_search else true
     @search_contains = @options.search_contains || false
@@ -150,13 +149,10 @@ class AbstractChosen
           results_group = @results_data[option.group_array_index]
           results += 1 if results_group.active_options is 0 and results_group.search_match
           results_group.active_options += 1
-
+                
         unless option.group and not @group_search
 
-          if this.enable_search_with_value
-            option.search_text = if option.group then option.label else option.text + "<span style='display:none;'> " + option.value + "</span>"
-          else
-            option.search_text = if option.group then option.label else option.text
+          option.search_text = if option.group then option.label else option.text
           option.search_match = this.search_string_match(option.search_text, regex)
           results += 1 if option.search_match and not option.group
 
@@ -167,7 +163,7 @@ class AbstractChosen
               option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos)
 
             results_group.group_match = true if results_group?
-
+          
           else if option.group_array_index? and @results_data[option.group_array_index].search_match
             option.search_match = true
 
@@ -201,7 +197,7 @@ class AbstractChosen
     @selected_option_count = 0
     for option in @form_field.options
       @selected_option_count += 1 if option.selected
-
+    
     return @selected_option_count
 
   choices_click: (evt) ->
@@ -259,7 +255,7 @@ class AbstractChosen
     tmp.appendChild(element)
     tmp.innerHTML
 
-  # class methods and variables ============================================================
+  # class methods and variables ============================================================ 
 
   @browser_is_supported: ->
     if window.navigator.appName == "Microsoft Internet Explorer"
